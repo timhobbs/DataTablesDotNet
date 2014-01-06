@@ -14,7 +14,7 @@ So, here it is. The code has been cleaned up, it uses Paul's Expression code for
 
 How to use
 ----------
-1. Add reference to DLL or add via nuget:
+1. Add reference to DLL or add via nuget:  
     `PM> Install-Package Newtonsoft.Json`
 2. Add model binder to global.asax:  
     `ModelBinders.Binders.Add(typeof(DataTablesRequest), new DataTablesModelBinder());`
