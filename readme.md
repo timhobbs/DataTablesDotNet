@@ -15,16 +15,16 @@ So, here it is. The code has been cleaned up, it uses Paul's Expression code for
 How to use
 ----------
 1. Add reference to DLL or add via nuget:
-    PM> Install-Package Newtonsoft.Json
+    `PM> Install-Package Newtonsoft.Json`
 2. Add model binder to global.asax:  
-    ModelBinders.Binders.Add(typeof(DataTablesRequest), new DataTablesModelBinder());
+    `ModelBinders.Binders.Add(typeof(DataTablesRequest), new DataTablesModelBinder());`
 3. Add the model type parameter to the appropriate controller method:  
-    public JsonResult GetUsers(DataTablesRequest model) {
+    `public JsonResult GetUsers(DataTablesRequest model) {
         ...
-    }
+    }`
 4. Pass bound model and "all" data enumerable to an new instance of DataTablesParser:  
-    var dataTableParser = new DataTablesParser<User>(model, data);
+    `var dataTableParser = new DataTablesParser<User>(model, data);`
 5. Call the Process() method:  
-    var formattedList = dataTableParser.Process();
+    `var formattedList = dataTableParser.Process();`
 6. Return the formatted data:  
-    return Json(formattedList, JsonRequestBehavior.AllowGet);
+    `return Json(formattedList, JsonRequestBehavior.AllowGet);`
