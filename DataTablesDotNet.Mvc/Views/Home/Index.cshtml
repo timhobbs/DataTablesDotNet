@@ -1,0 +1,82 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+<table id="grid" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Edit</th>
+            <th>Name</th>
+            <th>Street</th>
+            <th>City</th>
+            <th>Zip</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>   
+            <td></td>  
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var grid = $('#grid').dataTable({
+                "sDom": "<'row-fluid'<'span6'l><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+                "bProcessing": true,
+                "bSort": true,
+                "bServerSide": true,
+                "sAjaxSource": "/Home/GetUsers",
+                "aoColumnDefs": [
+                    {
+                        "fnRender": function (oObj) {
+                            return "<a href='#" + oObj.aData[0] + "'>Edit</a>";
+                        },
+                        "sName": "Id",
+                        "bSortable": false,
+                        "aTargets": [0]
+                    },
+                    {
+                        "sName": "FullName",
+                        "bSearchable": true,
+                        "bSortable": true,
+                        "aTargets": [1]
+                    },
+                    {
+                        "sName": "Street",
+                        "bSearchable": true,
+                        "bSortable": true,
+                        "aTargets": [2]
+                    },
+                    {
+                        "sName": "City",
+                        "bSearchable": true,
+                        "bSortable": true,
+                        "aTargets": [3]
+                    },
+                    {
+                        "sName": "Zip",
+                        "bSearchable": true,
+                        "bSortable": true,
+                        "aTargets": [4]
+                    },
+                    {
+                        "sName": "Amount",
+                        "bSearchable": true,
+                        "bSortable": true,
+                        "aTargets": [5]
+                    }
+                ]
+            });
+            grid.fnSetFilteringDelay(1000);
+        });
+    </script>
+}
