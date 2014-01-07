@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\ExpressionSubstitute.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\PredicateBuilder.cs" />
     <Compile Include="Models\DataTablesColumn.cs" />

@@ -150,13 +150,15 @@ namespace DataTablesDotNet {
             .Select(x => x.Name).ToList();
 
             var predicate = PredicateBuilder.False<T>();
+            var obj = Expression.Parameter(typeof(T));
 
             foreach (var name in propNames) {
-                var filterBy = FilterByString(name, searchTerm);
+                var filterBy = FilterByString(obj, name, searchTerm);
                 predicate = predicate.Or(filterBy);
             }
 
-            var filter = source.OfType<T>().Where(predicate);
+            var rewired = RewireLambdaExpression(predicate, obj);
+            var filter = source.OfType<T>().Where(rewired);
             return filter;
         }
 
@@ -169,17 +171,15 @@ namespace DataTablesDotNet {
         /// <param name="property">property name</param>
         /// <param name="value">value of search phrase</param>
         /// <returns>Expression of T, bool</returns>
-        private static Expression<Func<T, bool>> FilterByString(string property, string value) {
-            var obj = Expression.Parameter(typeof(T), "obj");
+        private static Expression<Func<T, bool>> FilterByString(ParameterExpression obj, string property, string value) {
             var propertySelector = Expression.PropertyOrField(obj, property);
-
             ParameterExpression parameterExpression = null;
             Expression constExp = Expression.Constant(value.ToLower());
             var memberExpression = GetMemberExpression(propertySelector, out parameterExpression);
             var dynamicExpression = Expression.Call(memberExpression, miTL);
             dynamicExpression = Expression.Call(dynamicExpression, miC, constExp);
 
-            var pred = Expression.Lambda<Func<T, bool>>(dynamicExpression, new[] { parameterExpression });
+            var pred = Expression.Lambda<Func<T, bool>>(dynamicExpression, obj);
             return pred;
         }
 
@@ -206,6 +206,12 @@ namespace DataTablesDotNet {
             }
 
             return null;
+        }
+
+        private static Expression<Func<TEntity, TReturnType>> RewireLambdaExpression<TEntity, TReturnType>(Expression<Func<TEntity, TReturnType>> expression,
+                                                                                                            ParameterExpression newLambdaParameter) {
+            var newExp = new ExpressionSubstitute(expression.Parameters.Single(), newLambdaParameter).Visit(expression);
+            return (Expression<Func<TEntity, TReturnType>>)newExp;
         }
     }
 }
