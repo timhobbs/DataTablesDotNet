@@ -28,3 +28,5 @@ How to use
     `var formattedList = dataTableParser.Process();`
 6. Return the formatted data:  
     `return Json(formattedList, JsonRequestBehavior.AllowGet);`
+
+If you want to see it in action, you can download the code and run the included MVC app in the debugger.
