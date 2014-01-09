@@ -30,3 +30,23 @@ How to use
     `return Json(formattedList, JsonRequestBehavior.AllowGet);`
 
 If you want to see it in action, you can download the code and run the included MVC app in the debugger.
+
+Examples
+--------
+
+Example using EF `ObjectContext`:
+
+    public DataTablesData GetData(DataTablesRequest dt) {
+        if (dt == null) {
+            throw new ArgumentException("dt");
+        }
+
+        using (var context = new ObjectContext(_connectionString)) {
+            using (var repo = new Repository<MyObject>(context)) {
+                var query = repo.Table.OrderBy(t => t.SortValue).AsQueryable();
+                var parser = new DataTablesParser<MyObject>(dt, query);
+                var data = parser.Process();
+                return data;
+            }
+        }
+    }
