@@ -15,7 +15,7 @@ So, here it is. The code has been cleaned up, it uses Paul's Expression code for
 How to use
 ----------
 1. Add reference to DLL or add via nuget:  
-    `PM> Install-Package Newtonsoft.Json`
+    `PM> Install-Package DataTablesDotNet`
 2. Add model binder to global.asax:  
     `ModelBinders.Binders.Add(typeof(DataTablesRequest), new DataTablesModelBinder());`
 3. Add the model type parameter to the appropriate controller method:  
