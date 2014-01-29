@@ -145,12 +145,21 @@ namespace DataTablesDotNet {
         /// </remarks>
         /// <returns>IQueryable of T</returns>
         private static IQueryable<T> Filter(IQueryable source, DataTablesRequest requestModel) {
+            // If there is no search term wew don't need to bother with filtering
+            if (String.IsNullOrEmpty(requestModel.sSearch)) {
+                return (IQueryable<T>)source;
+            }
+
             var predicate = PredicateBuilder.False<T>();
             var obj = Expression.Parameter(typeof(T));
 
             var columnNames = requestModel.sColumns.Split(',');
+            var propNames = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                                     .Where(e => e.PropertyType == typeof(string))
+                                     .Select(x => x.Name).ToList();
+
             for (int i = 0; i < columnNames.Length; i++) {
-                if (requestModel.bSearchable[i]) {
+                if (requestModel.bSearchable[i] && propNames.Contains(columnNames[i])) {
                     var filterBy = FilterByString(obj, columnNames[i], requestModel.sSearch);
                     predicate = predicate.Or(filterBy);
                 }
@@ -173,10 +182,10 @@ namespace DataTablesDotNet {
         private static Expression<Func<T, bool>> FilterByString(ParameterExpression obj, string property, string value) {
             var propertySelector = Expression.PropertyOrField(obj, property);
             ParameterExpression parameterExpression = null;
-            Expression constExp = Expression.Constant(value);
+            Expression constExp = Expression.Constant(value.ToLower());
             var memberExpression = GetMemberExpression(propertySelector, out parameterExpression);
             var dynamicExpression = Expression.Call(memberExpression, miTL);
-            dynamicExpression = Expression.Call(dynamicExpression, miC, constExp);
+            dynamicExpression = Expression.Call(dynamicExpression ?? memberExpression, miC, constExp);
 
             var pred = Expression.Lambda<Func<T, bool>>(dynamicExpression, obj);
             return pred;
