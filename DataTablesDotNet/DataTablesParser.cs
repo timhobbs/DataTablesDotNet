@@ -173,7 +173,7 @@ namespace DataTablesDotNet {
         private static Expression<Func<T, bool>> FilterByString(ParameterExpression obj, string property, string value) {
             var propertySelector = Expression.PropertyOrField(obj, property);
             ParameterExpression parameterExpression = null;
-            Expression constExp = Expression.Constant(value.ToLower());
+            Expression constExp = Expression.Constant(value);
             var memberExpression = GetMemberExpression(propertySelector, out parameterExpression);
             var dynamicExpression = Expression.Call(memberExpression, miTL);
             dynamicExpression = Expression.Call(dynamicExpression, miC, constExp);
