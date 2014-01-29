@@ -25,7 +25,7 @@ namespace DataTablesDotNet {
             model.sEcho = requestModel.sEcho;
             model.iTotalRecords = data.Count();
 
-            var records = Filter(data, requestModel.sSearch);
+            var records = Filter(data, requestModel);
             records = ApplySort(records);
 
             model.iTotalDisplayRecords = (records.FirstOrDefault() == null) ? 0 : records.Count();
@@ -144,17 +144,16 @@ namespace DataTablesDotNet {
         /// Query logic = (or … or …) And (or … or …)
         /// </remarks>
         /// <returns>IQueryable of T</returns>
-        private static IQueryable<T> Filter(IQueryable source, string searchTerm) {
-            var propNames = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(e => e.PropertyType == typeof(string))
-            .Select(x => x.Name).ToList();
-
+        private static IQueryable<T> Filter(IQueryable source, DataTablesRequest requestModel) {
             var predicate = PredicateBuilder.False<T>();
             var obj = Expression.Parameter(typeof(T));
 
-            foreach (var name in propNames) {
-                var filterBy = FilterByString(obj, name, searchTerm);
-                predicate = predicate.Or(filterBy);
+            var columnNames = requestModel.sColumns.Split(',');
+            for (int i = 0; i < columnNames.Length; i++) {
+                if (requestModel.bSearchable[i]) {
+                    var filterBy = FilterByString(obj, columnNames[i], requestModel.sSearch);
+                    predicate = predicate.Or(filterBy);
+                }
             }
 
             var rewired = RewireLambdaExpression(predicate, obj);
