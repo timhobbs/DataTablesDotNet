@@ -185,7 +185,7 @@ namespace DataTablesDotNet {
             Expression constExp = Expression.Constant(value.ToLower());
             var memberExpression = GetMemberExpression(propertySelector, out parameterExpression);
             var dynamicExpression = Expression.Call(memberExpression, miTL);
-            dynamicExpression = Expression.Call(dynamicExpression ?? memberExpression, miC, constExp);
+            dynamicExpression = Expression.Call(dynamicExpression, miC, constExp);
 
             var pred = Expression.Lambda<Func<T, bool>>(dynamicExpression, obj);
             return pred;
