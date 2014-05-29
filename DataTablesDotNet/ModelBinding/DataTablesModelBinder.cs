@@ -19,7 +19,12 @@ namespace DataTablesDotNet.ModelBinding {
                     var value = property.GetValue(model, null);
                     if (property.PropertyType.IsInterface == false) {
                         var formValue = requestParams.Get(property.Name);
-                        property.SetValue(model, Convert.ChangeType(formValue, property.PropertyType), null);
+                        // if filtering is disabled, the sSearch and bRegex parameters will not be sent from the client.  So, we check to make sure we have a value before
+                        // trying to set it in the model.
+                        if (formValue != null)
+                        {
+                            property.SetValue(model, Convert.ChangeType(formValue, property.PropertyType), null);
+                        }
                     }
                 }
 
