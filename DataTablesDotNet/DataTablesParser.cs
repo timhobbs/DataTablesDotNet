@@ -30,8 +30,10 @@ namespace DataTablesDotNet {
 
             model.iTotalDisplayRecords = (records.FirstOrDefault() == null) ? 0 : records.Count();
 
+            // if paging is disabled, iDisplayLength is always -1, so we check for that and take all records in that case.
+            var takeRecords = (requestModel.iDisplayLength == -1) ? model.iTotalDisplayRecords : requestModel.iDisplayLength;
             var pagedRecords = records.Skip(requestModel.iDisplayStart)
-                     .Take(requestModel.iDisplayLength);
+                     .Take(takeRecords);
 
             var aaData = new List<List<string>>();
 
